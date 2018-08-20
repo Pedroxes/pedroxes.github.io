@@ -1,0 +1,35 @@
+html {
+
+}
+    
+ 
+}
+
+body {
+ 
+}
+
+
+      p.border1 {
+          
+      border-bottom: 4px solid black;
+          }
+
+h1.kontakt {
+     border-bottom: 4px solid black;
+}
+
+h1.header1 {
+    background-color: darkgray;
+    padding:10px;
+    
+}
+
+col-sm-8{
+    background-color:lavender;
+}
+
+.container.container-custom
+{
+padding:0 5px;
+}

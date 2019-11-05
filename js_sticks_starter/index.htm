@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+
+    <title>Sticks Game</title>
+</head>
+
+<body>
+    <p>
+        select computer level and click on the sticks to remove or click Start computer
+        for computer to make the first move.
+    </p>
+
+    <form>
+        <fieldset id="selection_fs">
+            <legend>Choose your computer opponent</legend>
+            <input type="radio" name="opponent_grp" value="0" checked /> Stupid player
+            <input type="radio" name="opponent_grp" value="1" /> Random player
+            <input type="radio" name="opponent_grp" value="2" /> Smart player
+            <input type="radio" name="opponent_grp" value="3" /> AI player
+            <input type="button" id="start_computer" value="Start Computer" />
+        </fieldset>
+    </form>
+
+    <div id="sticks"> </div>
+
+    <span id="message">Pick your sticks</span>
+
+    <div id="button"></div>
+
+    <div id="scoretable">
+        <span id="stupidST">Stupid Player 0-0</span>
+        <br />
+        <span id="randomST">Random Player 0-0</span>
+        <br />
+        <span id="smartST">Smart Player 0-0</span>
+        <br />
+        <span id="aiST">AI Player 0-0</span>
+    </div>
+
+    <script>
+        var divSec = document.getElementById("sticks");
+        var spanElm = document.getElementById("message");
+        var startButton = document.getElementById('button');
+
+        var difficulitySel = document.getElementById('selection_fs');
+        var choice = document.getElementsByName('opponent_grp');
+
+        var selOpponent = null;
+        var inTurn = -1; // 0 = Human 1 = Computer;
+
+        var startComp = document.getElementById('start_computer');
+
+        var sticksRemaining = 15;
+
+        var last_remaining = 15;
+
+        function StupidPlayer() {
+            this.choice = document.getElementById("stupidST");
+            this.wins = 0;
+            this.losses = 0;
+            this.makeMove = function (remaining) {
+                return 1;
+            };
+
+            this.gameOver = function (youWon) {
+                if (youWon) {
+                    this.wins++;
+                } else {
+                    this.losses++;
+                }
+                this.choice.textContent = "Stupid player " + this.wins + " - " + this.losses;
+            };
+        }
+
+        var stupidPlayer = new StupidPlayer();
+        stupidPlayer.choice = document.getElementById("stupidST");
+
+        function setOppentType() {
+            for (var i = 0, length = choice.length; i < length; i++) {
+                if (choice[i].checked) {
+                    switch (choice[i].value) {
+                        case "0":
+                            selOpponent = stupidPlayer;
+                            break;
+                        case "0":
+                            selOpponent = randomPlayer;
+                            break;
+                    }
+                }
+            }
+        }
+
+        function newGame() {
+            sticksRemaining = 15;
+            inturn = -1;
+            selOpponent = null;
+            for (i = 0; i < sticksRemaining; i++) {
+                stick = divSec.children[i];
+                stick.setAttribute("src", "match-stick-drawing.jpg");
+            }
+            spanElm.textContent = sticksRemaining + "sticks remaining, make your pick";
+            startButton.removeChild(startButton.children[0]);
+            difficulitySel.removeAttribute("disabled");
+        }
+
+        function start_comp() {
+            difficulitySel.setAttribute("disabled", "true");
+            inTurn = 1;
+
+            if (selOpponent == null) {
+                setOppentType();
+            }
+            computerMakeMove();
+        }
+
+        function computerMakeMove() {
+            mouseClick(divSec.children[sticksRemaining - selOpponent.makeMove(sticksRemaining)]);
+        }
+
+
+        function mouseOverStick(elm) {
+            spanElm.textContent = "Mouse over stick " + elm.attributes["value"].value;
+        }
+
+        function mouseClick(elm) {
+            if (selOpponent == null) {
+                difficulitySel.setAttribute("disabled", "true");
+                setOppentType();
+            }
+
+            if (inTurn < 0) {
+                inTurn = 0;
+            }
+
+            if (Number(elm.attributes["value"].value) >= sticksRemaining - 3) {
+                for (var i = Number(elm.attributes["value"].value); i < sticksRemaining; i++) {
+                    imgElm = document.getElementById("stick_" + i);
+                    imgElm.setAttribute("src", "match-stick-drawing-x.jpg");
+
+                }
+                sticksRemaining = Number(elm.attributes["value"].value);
+
+                spanElm.textContent = sticksRemaining + " Sticks remaining, make your pick!";
+                if (sticksRemaining == 0) {
+                    if (inTurn == 1) {
+                        selOpponent.gameOver(false);
+                    } else {
+                        selOpponent.gameOver(true);
+                    }
+                    newGameBtn = document.createElement("input");
+                    newGameBtn.setAttribute("type", "button");
+                    newGameBtn.setAttribute("onclick", "newGame()");
+                    newGameBtn.value = "New Game";
+                    startButton.appendChild(newGameBtn);
+
+                } else {
+                    if (inTurn == 0) {
+                        difficulitySel.setAttribute("disabled", "true");
+                        inTurn = 1;
+                        computerMakeMove();
+                        difficulitySel.removeAttribute("disabled");
+
+                    } else {
+                        inTurn = 0;
+                    }
+                }
+
+            }
+        }
+
+
+        for (i = 0; i < sticksRemaining; i++) {
+            imgElm = document.createElement("img");
+            imgElm.setAttribute("src", "match-stick-drawing.jpg");
+            imgElm.setAttribute("id", "stick_" + i);
+            imgElm.setAttribute("value", String(i));
+
+            imgElm.setAttribute("onmouseover", "mouseOverStick(this)");
+            imgElm.setAttribute("onclick", "mouseClick(this)");
+            divSec.appendChild(imgElm);
+        }
+
+        startComp.setAttribute("onclick", "start_comp()");
+
+        spanElm.textContent = sticksRemaining + " sticks remaining, make your pick!";
+
+    </script>
+
+</body>
+</html>
+notificationnotification
+close
